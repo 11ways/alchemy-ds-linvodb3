@@ -30,6 +30,9 @@ var LinvoDS = Function.inherits('Alchemy.MongoDatasource', function Linvodb3Data
 	this.collections = {};
 });
 
+// Indicate this datasource does NOT support objectids
+LinvoDS.setSupport('objectid', false);
+
 /**
  * Prepare value to be stored in the database
  *
@@ -232,10 +235,37 @@ LinvoDS.setMethod(function _read(model, query, _options, callback) {
 				return callback(err);
 			}
 
-			// There is no cache because LinvoDB3 stores everything in memory
-			// anyway, it seems kind of silly
-
+			// We don't cache things here because everything is closeby anyway
 			callback(err, data.items, data.available);
+		});
+	});
+});
+
+/**
+ * Remove a record from the database
+ *
+ * @author   Jelle De Loecker <jelle@develry.be>
+ * @since    0.1.0
+ * @version  0.1.0
+ */
+LinvoDS.setMethod(function _remove(model, query, options, callback) {
+
+	this.collection(model.table, function gotCollection(err, collection) {
+
+		if (err != null) {
+			return callback(err);
+		}
+
+		collection.remove(query, {}, function removed(err, amount_removed){
+
+			if (err) {
+				return callback(err);
+			}
+
+			//clear cache
+			model.nukeCache();
+
+			callback(null, amount_removed);
 		});
 	});
 });

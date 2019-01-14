@@ -7,9 +7,11 @@
 		"leveldown": "~4.0.1",
 		"linvodb3": "~3.26.0"
 	},
-	"license": "MIT",
-	"engines": {
-		"node": ">=8.0.0"
+	"peerDependencies": {
+		"alchemymvc": "~1.0.8"
 	},
-	"private": true
+	"engines": {
+		"node": ">=8.9.0"
+	},
+	"license": "MIT"
 }

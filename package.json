@@ -1,17 +1,18 @@
 {
 	"name": "alchemy-ds-linvodb3",
 	"description": "LinvoDB3 datasource plugin for Alchemy MVC",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"repository": "skerit/alchemy-ds-linvodb3",
 	"dependencies": {
 		"leveldown": "~4.0.1",
 		"linvodb3": "~3.26.0"
 	},
 	"peerDependencies": {
-		"alchemymvc": "~1.0.8"
+		"alchemymvc": "~1.1.0"
 	},
 	"engines": {
 		"node": ">=8.9.0"
 	},
-	"license": "MIT"
+	"license": "MIT",
+	"private": true
 }

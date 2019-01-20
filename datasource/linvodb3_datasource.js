@@ -14,7 +14,7 @@ LinvoDBCollection.defaults.store = {
  * @since    0.1.0
  * @version  0.1.0
  */
-var LinvoDS = Function.inherits('Alchemy.MongoDatasource', function Linvodb3Datasource(name, _options) {
+var LinvoDS = Function.inherits('Alchemy.Datasource.Mongo', function Linvodb3(name, _options) {
 
 	var options,
 	    uri;
@@ -82,19 +82,6 @@ LinvoDS.setMethod(function _valueToApp(field, query, options, value, callback) {
 	setImmediate(function immediateDelay() {
 		callback(null, result);
 	});
-});
-
-/**
- * Get a connection to the database
- *
- * @author   Jelle De Loecker   <jelle@develry.be>
- * @since    0.3.0
- * @version  0.3.0
- *
- * @param    {Function}   callback
- */
-LinvoDS.setMethod(function connect(callback) {
-	if (callback) callback(null);
 });
 
 /**
@@ -174,32 +161,26 @@ LinvoDS.setMethod(function _create(model, data, options, callback) {
  * @since    0.1.0
  * @version  0.1.0
  */
-LinvoDS.setMethod(function _read(model, query, _options, callback) {
+LinvoDS.setMethod(function _read(model, criteria, callback) {
 
-	this.collection(model.table, function gotCollection(err, collection) {
+	var that = this;
 
-		var options,
-		    cursor,
-		    temp,
-		    key;
+	this.collection(model.table, async function gotCollection(err, collection) {
 
 		if (err != null) {
 			return callback(err);
 		}
 
-		options = Object.assign({}, _options);
+		let compiled,
+		    options,
+		    cursor;
 
-		// Primitive way to make sure objectids are cast to strings
-		Object.walk(query, function eachEntry(value, key, parent) {
-			// ObjectID values always need to be strings in nedb
-			// This should be moved somewhere else, but it'll do for now
-			if (value && typeof value == 'object' && value.constructor && value.constructor.name == 'ObjectID') {
-				parent[key] = ''+value;
-			}
-		});
+		await criteria.normalize();
+		compiled = await that.compileCriteria(criteria);
+		options = that.compileCriteriaOptions(criteria);
 
 		// Create the cursor
-		cursor = collection.find(query);
+		cursor = collection.find(compiled);
 
 		// LinvoDB3 doesn't support passing a second object to the find method,
 		// so we have to do it manually
@@ -224,7 +205,7 @@ LinvoDS.setMethod(function _read(model, query, _options, callback) {
 
 				// LinvoDB3 has no count on the cursor,
 				// it is a separate method of the collection
-				collection.count(query, next);
+				collection.count(compiled, next);
 			},
 			items: function getItems(next) {
 				cursor.exec(next);

@@ -4,7 +4,7 @@
 	"version": "0.2.0",
 	"repository": "skerit/alchemy-ds-linvodb3",
 	"dependencies": {
-		"leveldown": "~4.0.1",
+		"leveldown": "~5.1.1",
 		"linvodb3": "~3.26.0"
 	},
 	"peerDependencies": {

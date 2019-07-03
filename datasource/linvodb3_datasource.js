@@ -33,6 +33,9 @@ var LinvoDS = Function.inherits('Alchemy.Datasource.Mongo', function Linvodb3(na
 // Indicate this datasource does NOT support objectids
 LinvoDS.setSupport('objectid', false);
 
+// Disable the connect method
+LinvoDS.setProperty('connect', null);
+
 /**
  * Prepare value to be stored in the database
  *
